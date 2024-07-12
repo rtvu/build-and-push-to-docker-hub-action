@@ -1,0 +1,62 @@
+name: 'Build and Push to Docker Hub Action'
+description: 'GitHub Action to build container image and push to Docker Hub.'
+author: 'rtvu'
+
+branding:
+  icon: 'upload'
+  color: 'gray-dark'
+
+inputs:
+  image:
+    description: 'Name of image with format <OWNER>/<IMAGE>'
+    required: true
+  latest:
+    description: 'Use latest tag'
+    required: false
+    default: false
+  platforms:
+    description: 'List of target platforms to build'
+    required: true
+  tag:
+    description: 'Name of tag for image'
+    required: true
+  token:
+    description: 'Docker Hub token'
+    required: true
+  username:
+    description: 'Docker Hub username'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    -
+      name: 'Get metadata'
+      id: metadata
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ inputs.image }}
+        flavor: |
+          latest=${{ inputs.latest }}
+        tags: |
+          type=raw,value=${{ inputs.tag }}
+    -
+      name: 'Set up QEMU'
+      uses: docker/setup-qemu-action@v3
+    -
+      name: 'Set up buildx'
+      uses: docker/setup-buildx-action@v3
+    -
+      name: 'Login to Docker Hub'
+      uses: docker/login-action@v3
+      with:
+        username: ${{ inputs.username }}
+        password: ${{ inputs.token }}
+    -
+      name: 'Build and push to Docker Hub'
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        platforms: ${{ inputs.platforms }}
+        push: true
+        tags: ${{ steps.metadata.outputs.tags }}
