@@ -1,0 +1,28 @@
+name: 'Set Repository Description'
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  set-description:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: 'Checkout repository'
+        uses: actions/checkout@v4
+      -
+        name: 'Get README description'
+        id: get-description
+        uses: rtvu/get-description-from-readme-action@v1.0.1
+      -
+        name: 'Set repository description'
+        uses: rtvu/set-repository-description-action@v1.0.1
+        with:
+          description: ${{ steps.get-description.outputs.description }}
+          repository: ${{ github.repository }}
+          token: ${{ secrets.REPOSITORY_PAT }}
