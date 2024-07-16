@@ -11,14 +11,14 @@ inputs:
     description: 'Name of image with format <OWNER>/<IMAGE>'
     required: true
   latest:
-    description: 'Use latest tag'
+    description: 'Include latest tag'
     required: false
     default: false
   platforms:
-    description: 'List of target platforms to build'
+    description: 'Comma separated list of target platforms'
     required: true
-  tag:
-    description: 'Name of tag for image'
+  tags:
+    description: 'Comma separated list of tags for image'
     required: true
   token:
     description: 'Docker Hub token'
@@ -31,15 +31,34 @@ runs:
   using: 'composite'
   steps:
     -
-      name: 'Get metadata'
-      id: metadata
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ inputs.image }}
-        flavor: |
-          latest=${{ inputs.latest }}
-        tags: |
-          type=raw,value=${{ inputs.tag }}
+      name: 'Format tags'
+      id: format-tags
+      shell: python3 -u {0} ${{ inputs.latest && '--latest' || '--no-latest' }} ${{ inputs.image }} ${{ inputs.tags }}
+      run: |
+        import argparse
+        import os
+
+        def convert_tags(image, tags, latest):
+            tags = tags.split(',')
+            if latest:
+                tags.append('latest')
+            tags = map(lambda tag : f'{image}:{tag.strip()}', tags)
+            tags = ','.join(tags)
+
+            output_path = os.getenv('GITHUB_OUTPUT')
+            with open(output_path, 'a') as output:
+                output.write(f'tags={tags}')
+
+        def main():
+            parser = argparse.ArgumentParser()
+            parser.add_argument("--latest", action=argparse.BooleanOptionalAction, default=False, help='Include latest tag')
+            parser.add_argument('image', type=str, help='Name of image with format <OWNER>/<IMAGE>')
+            parser.add_argument('tags', type=str, help='Comma separated list of tags for image')
+            args = parser.parse_args()
+            convert_tags(image=args.image, tags=args.tags, latest=args.latest)
+
+        if __name__ == '__main__':
+            main()
     -
       name: 'Set up QEMU'
       uses: docker/setup-qemu-action@v3
@@ -59,4 +78,4 @@ runs:
         context: .
         platforms: ${{ inputs.platforms }}
         push: true
-        tags: ${{ steps.metadata.outputs.tags }}
+        tags: ${{ steps.format-tags.outputs.tags }}

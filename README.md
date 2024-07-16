@@ -11,22 +11,22 @@ steps:
     uses: actions/checkout@v4
   -
     name: 'Build and push image'
-    uses: rtvu/build-and-push-to-docker-hub-action@v1.0.1
+    uses: rtvu/build-and-push-to-docker-hub-action@v2.0.0
     with:
       image: ${{ github.repository }}
       platforms: linux/amd64
-      tag: latest
+      tags: version1,version2
       token: ${{ secrets.DOCKER_HUB_TOKEN }}
       username: ${{ secrets.DOCKER_HUB_USERNAME }}
 ```
 
 ## Inputs
 
-| Name        | Description                               | Default |
-| ----------- | ----------------------------------------- | ------- |
-| `image`     | Name of image with format <OWNER>/<IMAGE> |         |
-| `latest`    | Use latest tag                            | `true`  |
-| `platforms` | List of target platforms to build         |         |
-| `tag`       | Name of tag for image                     |         |
-| `token`     | Docker Hub token                          |         |
-| `username`  | Docker Hub username                       |         |
+| Name        | Description                                 | Default |
+| ----------- | ------------------------------------------- | ------- |
+| `image`     | Name of image with format `<OWNER>/<IMAGE>` |         |
+| `latest`    | Include `latest` tag                        | `true`  |
+| `platforms` | Comma separated list of target platforms    |         |
+| `tags`      | Comma separated list of tags for image      |         |
+| `token`     | Docker Hub token                            |         |
+| `username`  | Docker Hub username                         |         |
