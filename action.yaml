@@ -12,7 +12,6 @@ inputs:
     required: true
   latest:
     description: 'Include latest tag'
-    required: false
     default: false
   platforms:
     description: 'Comma separated list of target platforms'

@@ -22,11 +22,11 @@ steps:
 
 ## Inputs
 
-| Name        | Description                                 | Default |
-| ----------- | ------------------------------------------- | ------- |
-| `image`     | Name of image with format `<OWNER>/<IMAGE>` |         |
-| `latest`    | Include `latest` tag                        | `true`  |
-| `platforms` | Comma separated list of target platforms    |         |
-| `tags`      | Comma separated list of tags for image      |         |
-| `token`     | Docker Hub token                            |         |
-| `username`  | Docker Hub username                         |         |
+| Name        | Description                                 | Default  |
+| ----------- | ------------------------------------------- | -------- |
+| `image`     | Name of image with format `<OWNER>/<IMAGE>` |          |
+| `latest`    | Include `latest` tag                        | `false`  |
+| `platforms` | Comma separated list of target platforms    |          |
+| `tags`      | Comma separated list of tags for image      |          |
+| `token`     | Docker Hub token                            |          |
+| `username`  | Docker Hub username                         |          |
