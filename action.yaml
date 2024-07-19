@@ -9,7 +9,7 @@ branding:
 inputs:
   image:
     description: 'Name of image with format <OWNER>/<IMAGE>'
-    required: true
+    default: ${{ github.repository }}
   latest:
     description: 'Include latest tag'
     default: false
